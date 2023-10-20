@@ -3,7 +3,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 
-base_dir = os.path.abspath(os.path.dirname)
+base_dir = os.path.abspath(os.path.dirname(__file__))
 
 app = Flask(__name__)
 
@@ -34,8 +34,7 @@ class Puppy(db.Model):
     def report_toys(self):
         print("Here are my toys:")
         for toy in self.toys:
-            print(toy.item_name)
-   
+            print(toy.name)
 
 class Toy(db.Model):
 
@@ -45,9 +44,10 @@ class Toy(db.Model):
     name = db.Column(db.Text)
     puppy_id = db.Column(db.Integer, db.ForeignKey('puppies.id'))
     
-    def __init__(self, item_name, puppy_id):
-        self.item_name = item_name
+    def __init__(self, name, puppy_id):
+        self.name = name
         self.puppy_id = puppy_id
+    
 
 class Owner(db.Model):
     
@@ -55,6 +55,11 @@ class Owner(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.Text)
     puppy_id = db.Column(db.Integer, db.ForeignKey('puppies.id'))
-    
 
+    def __init__(self, name, puppy_id):
+        self.name = name
+        self.puppy_id = puppy_id
+
+with app.app_context():
+     db.create_all()
 
