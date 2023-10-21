@@ -1,5 +1,6 @@
 import os
-from flask import Flask
+from forms import AddForm, DeleteForm
+from flask import Flask, redirect, url_for, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 
@@ -14,6 +15,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 Migrate(app, db)
 
+### Models ###
 class Puppy(db.Model):
 
     __tablename__ = 'puppies'
@@ -26,7 +28,41 @@ class Puppy(db.Model):
     
     def __repr__(self):
         return f"Puppy name is {self.name}"
+
+### View Functions ###
+
+@app.route('/list')
+def list():
+    data = Puppy.query.all()
+    return render_template('list.html', data=data)
+
+
+@app.route('/add', methods = ['POST', 'GET'])
+def add():
+    form = AddForm()
+    if form.validate_on_submit():
+        name = form.name.data
+        db.session.add(name)
+        db.session.commit()
+        return redirect(url_for('list'))
     
+    return render_template('add.html', form=form)
 
 
+@app.route('/delete', methods=['POST', 'GET'])
+def delete():
+    form = DeleteForm()
+    if form.validate_on_submit():
+        id = form.id.data
+        puppy = Puppy.query.get(id)
+        db.session.delete(puppy)
+        db.session.commit()
+        return redirect(url_for('list'))
+    
+    return render_template('delete.html', form=form)
 
+
+if __name__ == '__main__':  
+    with app.app_context():
+        db.create_all()
+    app.run(debug=True)
