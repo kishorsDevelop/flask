@@ -37,8 +37,8 @@ def index():
 
 @app.route('/list')
 def list():
-    data = Puppy.query.all()
-    return render_template('list.html', data=data)
+    names = Puppy.query.all()
+    return render_template('list.html', names=names)
 
 
 @app.route('/add', methods = ['POST', 'GET'])
@@ -46,6 +46,7 @@ def add():
     form = AddForm()
     if form.validate_on_submit():
         name = form.name.data
+        name = Puppy(name=name)
         db.session.add(name)
         db.session.commit()
         return redirect(url_for('list'))
