@@ -19,7 +19,8 @@ class User(db.Model, UserMixin):
         self.username = username
         self.password_hash = generate_password_hash(password)
     
+    # import pdb; pdb.set_trace()
     def check_password(self, password):
-        return check_password_hash(password, self.password_hash)
+        return check_password_hash(self.password_hash, password)
 
     
