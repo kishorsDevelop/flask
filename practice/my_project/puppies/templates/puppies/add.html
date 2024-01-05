@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block content %}
+<h3> Add a new puppy to our database </h3>
+<form method="POST">
+    {{form.hidden_tag()}}
+    {{form.name.label}}{{form.name()}}
+    {{form.submit()}}
+</form>
+{% endblock %}
